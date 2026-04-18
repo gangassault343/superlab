@@ -30,7 +30,7 @@ pipeline {
                 withSonarQubeEnv('SONAR') {
                 echo '🔍 Running SonarCloud analysis (coverage disabled for now)...'
                 sh """
-                    ${SONAR _SCANNER}/bin/sonar-scanner \
+                    ${SONAR_SCANNER}/bin/sonar-scanner \
                         -Dsonar.projectKey=sonar superlab_sonarqubeproject \
                         -Dsonar.organization=sonar superlab \
                         -Dsonar.sources=src/main/java \
