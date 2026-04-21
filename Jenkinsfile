@@ -36,7 +36,8 @@ pipeline {
                           -Dsonar.java.binaries=target/classes \
                           -Dsonar.coverage.exclusions=**/*.java \
                           -Dsonar.coverage.newCode.requiredCoverage=0 \
-                          -Dsonar.newCode.period=1 \                         
+                          -Dsonar.newCode.period=1 \
+                          -Dsonar.qualitygate.wait=false \
                           -Dsonar.host.url=https://sonarcloud.io
                     """
                 }
