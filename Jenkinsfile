@@ -18,7 +18,7 @@ pipeline {
         stage('Maven Build') {
             steps {
                 echo 'Building project'
-                sh "mvn clean verify -Dtest='!FormUITest'"
+                sh "mvn clean verify -Dtest='!FormUITesttt'"
             }
         }
     }
