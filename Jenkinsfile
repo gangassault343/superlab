@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {        
-        SONAR_SCANNER = tool 'SonarScanner'
+        SONAR_SCANNER = tool 'SONAR'
     }
     tools {
         jdk 'jdk21'
