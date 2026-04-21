@@ -4,6 +4,7 @@ pipeline {
     tools {
         jdk 'jdk21'
         maven 'MAVEN'
+        SONAR_SCANNER = tool 'SonarScanner'
     }
 
     stages {
