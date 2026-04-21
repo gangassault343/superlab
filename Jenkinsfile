@@ -1,10 +1,11 @@
 pipeline {
     agent any
-
+    environment {        
+        SONAR_SCANNER = tool 'SonarScanner'
+    }
     tools {
         jdk 'jdk21'
-        maven 'MAVEN'
-        SONAR_SCANNER = tool 'SonarScanner'
+        maven 'MAVEN'        
     }
 
     stages {
