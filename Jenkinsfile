@@ -55,6 +55,17 @@ pipeline {
                 }
             }
         }
+        stage('Docker Build and Run') {
+            steps {
+                echo '🐳 Building and running Docker container...'
+                sh """
+                    docker build -t superlab:${BUILD_NUMBER} .
+                    docker ps -q --filter "publish=8081" | grep -q . && docker rm -f \$(docker ps -q --filter "publish=8081") || echo "No container on port 8081"
+                    docker run -d -p 8081:8080 --name superlab-app-${BUILD_NUMBER} superlab:${BUILD_NUMBER}
+                    sleep 10
+                """
+            }
+        }
     }
 
     post {
