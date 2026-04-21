@@ -23,7 +23,7 @@ pipeline {
         }
         stage('SonarCloud Scan') {
             steps {
-                withSonarQubeEnv('SonarQube') {
+                withSonarQubeEnv('SonarCloud') {
                     echo '🔍 Running SonarCloud analysis (coverage fully disabled)...'
                     sh """
                         ${SONAR_SCANNER}/bin/sonar-scanner \
