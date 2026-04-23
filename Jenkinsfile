@@ -56,55 +56,55 @@ pipeline {
                 }
             }
         }        
-       stage('Docker Build and Run') {
-    steps {
-        echo '🐳 Building and running Docker container...'
-        sh """
-            docker build -t superlab:${BUILD_NUMBER} .
-            docker ps -q --filter "publish=8081" | grep -q . && docker rm -f \$(docker ps -q --filter "publish=8081") || echo "No container on port 8081"
-            docker run -d -p 8081:8080 --name superlab-app-${BUILD_NUMBER} superlab:${BUILD_NUMBER}
-            sleep 10
-        """
-    }
-}   // ✅ CLOSE DOCKER STAGE HERE
-
-stage('Selenium Headless GUI Test') {
-    steps {
-        echo '🚀 Running Selenium GUI tests...'
-        sh "mvn -Dtest=FormUITest test -DfailIfNoTests=false"
-    }
-}
-
-stage('Approval Gate') {
-    steps {
-        timeout(time: 5, unit: 'MINUTES') {
-            script {
-                def approver = input(
-                    id: 'DeployApproval',
-                    message: '🚦 Approve pushing Docker image to Docker Hub?',
-                    ok: 'Approve & Continue',
-                    parameters: [
-                        string(name: 'Approved_By', defaultValue: '', description: 'Enter your name')
-                    ]
-                )
-                echo "✅ Approved by: ${approver}"
+        stage('Docker Build and Run') {
+            steps {
+                echo '🐳 Building and running Docker container...'
+                sh """
+                    docker build -t superlab:${BUILD_NUMBER} .
+                    docker ps -q --filter "publish=8081" | grep -q . && docker rm -f \$(docker ps -q --filter "publish=8081") || echo "No container on port 8081"
+                    docker run -d -p 8081:8080 --name superlab-app-${BUILD_NUMBER} superlab:${BUILD_NUMBER}
+                    sleep 10
+                """
+            }
+        stage('Selenium Headless GUI Test') {
+            steps {
+                echo '🚀 Running Selenium GUI tests...'
+                sh "${MAVEN_HOME}/bin/mvn -Dtest=FormUITest test -DfailIfNoTests=false"
+                   }
+            }
+        }
+       
+        // ✅ APPROVAL GATE ADDED HERE
+        stage('Approval Gate') {
+            steps {
+                timeout(time: 5, unit: 'MINUTES') {
+                    script {
+                        def approver = input(
+                            id: 'DeployApproval',
+                            message: '🚦 Approve pushing Docker image to Docker Hub?',
+                            ok: 'Approve & Continue',
+                            parameters: [
+                                string(name: 'Approved_By', defaultValue: '', description: 'Enter your name')
+                            ]
+                        )
+                        echo "✅ Approved by: ${approver}"
+                    }
+                }
+            }
+        }
+        stage('Push Docker Image to Docker Hub') {
+            steps {
+                echo '📦 Pushing image to Docker Hub...'
+                withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh """
+                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                        docker tag superlab:${BUILD_NUMBER} gangassault343/superlab:${BUILD_NUMBER}
+                        docker push gangassault343/superlab:${BUILD_NUMBER}
+                    """
+                }
             }
         }
     }
-}
-
-stage('Push Docker Image to Docker Hub') {
-    steps {
-        echo '📦 Pushing image to Docker Hub...'
-        withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-            sh """
-                echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                docker tag superlab:${BUILD_NUMBER} gangassault343/superlab:${BUILD_NUMBER}
-                docker push gangassault343/superlab:${BUILD_NUMBER}
-            """
-        }
-    }
-}
 
     post {
         success {
