@@ -89,9 +89,34 @@ pipeline {
     post {
         success {
             echo "✅ Pipeline completed successfully!"
+
+            emailext (
+                subject: "✅ SUCCESS: Jenkins Build #${BUILD_NUMBER}",
+                body: """
+                    <h3>Build Successful 🎉</h3>
+                    <p><b>Job:</b> ${JOB_NAME}</p>
+                    <p><b>Build Number:</b> ${BUILD_NUMBER}</p>
+                    <p><b>URL:</b> <a href="${BUILD_URL}">${BUILD_URL}</a></p>
+                """,
+                to: "${EMAIL_RECIPIENT}",
+                mimeType: 'text/html'
+            )
         }
+
         failure {
             echo "❌ Pipeline failed. Please check the logs."
+
+            emailext (
+                subject: "❌ FAILURE: Jenkins Build #${BUILD_NUMBER}",
+                body: """
+                    <h3>Build Failed ❌</h3>
+                    <p><b>Job:</b> ${JOB_NAME}</p>
+                    <p><b>Build Number:</b> ${BUILD_NUMBER}</p>
+                    <p><b>URL:</b> <a href="${BUILD_URL}">${BUILD_URL}</a></p>
+                """,
+                to: "${EMAIL_RECIPIENT}",
+                mimeType: 'text/html'
+            )
         }
     }
 }
