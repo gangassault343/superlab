@@ -55,13 +55,7 @@ pipeline {
                     }
                 }
             }
-        }
-        stage('Selenium Headless GUI Test') {
-            steps {
-                echo '🚀 Running Selenium GUI tests...'
-                sh "${MAVEN_HOME}/bin/mvn -Dtest=FormUITest test -DfailIfNoTests=false"
-            }
-        }
+        }        
         stage('Docker Build and Run') {
             steps {
                 echo '🐳 Building and running Docker container...'
@@ -71,6 +65,12 @@ pipeline {
                     docker run -d -p 8081:8080 --name superlab-app-${BUILD_NUMBER} superlab:${BUILD_NUMBER}
                     sleep 10
                 """
+            }
+        stage('Selenium Headless GUI Test') {
+            steps {
+                echo '🚀 Running Selenium GUI tests...'
+                sh "${MAVEN_HOME}/bin/mvn -Dtest=FormUITest test -DfailIfNoTests=false"
+                   }
             }
         }
        
