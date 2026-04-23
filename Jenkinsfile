@@ -73,6 +73,24 @@ pipeline {
                 sh "${MAVEN_HOME}/bin/mvn -Dtest=FormUITest test -DfailIfNoTests=false"
             }
         }
+        // ✅ APPROVAL GATE ADDED HERE
+        stage('Approval Gate') {
+            steps {
+                timeout(time: 5, unit: 'MINUTES') {
+                    script {
+                        def approver = input(
+                            id: 'DeployApproval',
+                            message: '🚦 Approve pushing Docker image to Docker Hub?',
+                            ok: 'Approve & Continue',
+                            parameters: [
+                                string(name: 'Approved_By', defaultValue: '', description: 'Enter your name')
+                            ]
+                        )
+                        echo "✅ Approved by: ${approver}"
+                    }
+                }
+            }
+        }
         stage('Push Docker Image to Docker Hub') {
             steps {
                 echo '📦 Pushing image to Docker Hub...'
