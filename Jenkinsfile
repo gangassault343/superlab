@@ -56,6 +56,12 @@ pipeline {
                 }
             }
         }
+         stage('Selenium Headless GUI Test') {
+            steps {
+                echo '🚀 Running Selenium GUI tests...'
+                sh "${MAVEN_HOME}/bin/mvn -Dtest=FormUITest test -DfailIfNoTests=false"
+            }
+        }
         stage('Docker Build and Run') {
             steps {
                 echo '🐳 Building and running Docker container...'
@@ -67,12 +73,7 @@ pipeline {
                 """
             }
         }
-        stage('Selenium Headless GUI Test') {
-            steps {
-                echo '🚀 Running Selenium GUI tests...'
-                sh "${MAVEN_HOME}/bin/mvn -Dtest=FormUITest test -DfailIfNoTests=false"
-            }
-        }
+       
         // ✅ APPROVAL GATE ADDED HERE
         stage('Approval Gate') {
             steps {
