@@ -66,6 +66,7 @@ pipeline {
                     sleep 10
                 """
             }
+        }
         stage('Selenium Headless GUI Test') {
             steps {
                 echo '🚀 Running Selenium GUI tests...'
