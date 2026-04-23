@@ -2,6 +2,7 @@ pipeline {
     agent any
     environment {        
         SONAR_SCANNER = tool 'SONAR'
+        EMAIL_RECIPIENT = "awsclassga@gmail.com"
     }
     tools {
         jdk 'jdk21'
